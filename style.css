@@ -1,0 +1,23 @@
+div.setting {
+	margin: 1em auto;
+}
+
+div.setting label {
+	display: inline-block;
+	width: 100px;
+}
+
+div.setting input {
+	width: 200px;
+}
+
+div.game-board, div.configuration {
+	margin: 3em auto;
+	width: 800px;
+}
+
+div.game-board p.board {
+	font-size: 64pt;
+	letter-spacing: 3px;
+	font-family: Consolas, monospace;
+}
