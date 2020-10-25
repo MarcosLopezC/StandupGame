@@ -88,18 +88,54 @@
 			return nextBoard;
 		};
 
+		let getMissCount = function(guesses) {
+			let phraseHasLetter = function(letter) {
+				for (let i = 0; i < settings.phrase.length; i += 1) {
+					if (settings.phrase[i].toUpperCase() === letter.toUpperCase()) {
+						return true;
+					}
+				}
+
+				return false;
+			};
+
+			let count = 0;
+
+			for (let i = 0; i < guesses.length; i += 1) {
+				if (!phraseHasLetter(guesses[i])) {
+					count += 1;
+				}
+			}
+
+			return count;
+		};
+
 		settings.board = playBoard("" , settings.phrase);
 
 		let boardElement = createElement("p")
 			.prop("class", "board")
 			.text(settings.board);
 
+		let missElement = createElement("span")
+			.text("0");
+
 		createSettingElement("Guesses", function(value) {
 			boardElement.text(playBoard(value, settings.phrase));
+
+			missElement.text(getMissCount(value).toString());
 		})
 			.appendTo(container);
 
 		container.append(boardElement);
+
+		container.append(
+			createDivElement("score")
+				.append(
+					createElement("label")
+						.text("Miss Count: ")
+				)
+				.append(missElement)
+		);
 
 		return container;
 	};
