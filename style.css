@@ -1,18 +1,27 @@
 div.setting {
 	margin: 1em auto;
+	display: flex;
+	align-items: center;
 }
 
 div.setting label {
 	display: inline-block;
+	vertical-align: middle;
 	width: 100px;
 }
 
-div.setting input {
-	width: 200px;
+div.setting input, div.setting textarea {
+	width: 100%;
+	resize: vertical;
+}
+
+div.configuration {
+	text-align: center;
 }
 
 div.game-board, div.configuration {
 	margin: 3em auto;
+	padding: 0 1em;
 	width: 800px;
 }
 
@@ -20,4 +29,41 @@ div.game-board p.board {
 	font-size: 64pt;
 	letter-spacing: 3px;
 	font-family: Consolas, monospace;
+	text-align: center;
+}
+
+div.game-board div.hint {
+	margin: 1em 0;
+	font-style: italic;
+	font-size: large;
+}
+
+div.game-board div.hint p {
+	text-align: center;
+}
+
+div.game-board div.button-container {
+	text-align: center;
+}
+
+div.game-board div.button-container button {
+	margin: 5px;
+	width: 30px;
+	height: 30px;
+	font-weight: bold;
+	font-family: Consolas,'Courier New', Courier, monospace;
+	border: 1px solid #000;
+	background-color: #eee;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+div.game-board div.button-container button.guess-good:disabled {
+	background-color: #dfd;
+	border-color: #ccc;
+}
+
+div.game-board div.button-container button.guess-bad:disabled {
+	background-color: #fdd;
+	border-color: #ccc;
 }
