@@ -8,28 +8,40 @@
 			.prop("class", className);
 	};
 
-	let createSettingElement = function(label, changeCallback) {
+	let createSettingElement = function(label, changeCallback, multiline) {
 		var container = createDivElement("setting");
 
 		createElement("label")
 			.text(label)
 			.appendTo(container);
 
-		createElement("input")
-			.prop("type", "text")
-			.keyup(function() {
-				changeCallback($(this).val());
-			})
-			.appendTo(container);
+		if (multiline) {
+			createElement("textarea")
+				.keyup(function() {
+					changeCallback($(this).val());
+				})
+				.appendTo(container);
+		}
+		else {
+			createElement("input")
+				.prop("type", "text")
+				.keyup(function() {
+					changeCallback($(this).val());
+				})
+				.appendTo(container);
+		}
 
 		return container;
 	};
 
 	let settings = {
 		phrase: null,
+		hint: null,
 		board: null,
 		guesses: ""
 	};
+
+	let availableGuessSymbols = "QWERTYUIOP\nASDFGHJKL\nZXCVBNM";
 
 	let main = function() {
 		createSettingPanel()
@@ -43,6 +55,9 @@
 			.append(createSettingElement("Phrase", function(value) {
 				settings.phrase = value.toUpperCase();
 			}))
+			.append(createSettingElement("Hint", function(value) {
+				settings.hint = value;
+			}, true))
 			.append(createElement("button")
 				.text("Start")
 				.click(function() {
@@ -88,54 +103,53 @@
 			return nextBoard;
 		};
 
-		let getMissCount = function(guesses) {
-			let phraseHasLetter = function(letter) {
-				for (let i = 0; i < settings.phrase.length; i += 1) {
-					if (settings.phrase[i].toUpperCase() === letter.toUpperCase()) {
-						return true;
-					}
-				}
-
-				return false;
-			};
-
-			let count = 0;
-
-			for (let i = 0; i < guesses.length; i += 1) {
-				if (!phraseHasLetter(guesses[i])) {
-					count += 1;
-				}
-			}
-
-			return count;
-		};
-
 		settings.board = playBoard("" , settings.phrase);
 
 		let boardElement = createElement("p")
 			.prop("class", "board")
 			.text(settings.board);
 
-		let missElement = createElement("span")
-			.text("0");
+		let buttonContainerElement = createDivElement("button-container");
 
-		createSettingElement("Guesses", function(value) {
-			boardElement.text(playBoard(value, settings.phrase));
-
-			missElement.text(getMissCount(value).toString());
-		})
-			.appendTo(container);
+		if (typeof settings.hint === "string" && settings.hint.length > 0) {
+			container.append(
+				createDivElement("hint")
+					.append(
+						createElement("p")
+							.text(settings.hint)
+					)
+			);
+		}
 
 		container.append(boardElement);
 
-		container.append(
-			createDivElement("score")
-				.append(
-					createElement("label")
-						.text("Miss Count: ")
-				)
-				.append(missElement)
-		);
+		availableGuessSymbols.split("\n").forEach(function(line) {
+			let container = createDivElement("line");
+
+			line.split("").forEach(function(symbol) {
+				let buttonElement = createElement("button")
+					.text(symbol)
+					.appendTo(container)
+					.click(function() {
+						settings.guesses += symbol;
+
+						boardElement.text(playBoard(settings.guesses, settings.phrase));
+
+						buttonElement.prop("disabled", true);
+					});
+
+				if (settings.phrase.includes(symbol)) {
+					buttonElement.addClass("guess-good");
+				}
+				else {
+					buttonElement.addClass("guess-bad");
+				}
+			});
+
+			container.appendTo(buttonContainerElement);
+		});
+
+		container.append(buttonContainerElement);
 
 		return container;
 	};
